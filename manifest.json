@@ -21,13 +21,14 @@
     {
       "matches": [
         "*://*/*",
-        "file://*/*"
+        "file://*/*",
+        "<all_urls>"
       ],
       "js": [
         "./libraries/jquery-2.1.4.min.js",
         "./libraries/damerau_levenshtein.js",
         "./libraries/my_library.js",
-        "content_script.js"
+        "./content_script.js"
       ]
     }
   ],
@@ -43,6 +44,8 @@
   },
   "permissions": [
     "file://*/*",
-    "tabs"
+    "tabs",
+    "http://*/",
+    "https://*/"
   ]
 }

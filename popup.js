@@ -15,7 +15,9 @@ var lastMsg;
 
 /* Listener for receiving messages from the content_script (run in a tab). */
 browser.runtime.onConnect.addListener(function(port) {
+
 	if (port.name == "sendBackResults") {
+		// console.log("sending back result");
 		port.onMessage.addListener(function(msg) {
 			updateResultsInPopup(msg);
 		});
@@ -23,6 +25,7 @@ browser.runtime.onConnect.addListener(function(port) {
 });
 
 function updateResultsInPopup(msg) {
+	console.log("updateResultsInPopup");
 	lastMsg = msg; // Save message (to be used when popup is reopened on a tab).
 	resultSelectedIndex = 0; // Set first result to be the active result (in green).
 	render(msg, resultSelectedIndex); // Update the mustache template.
@@ -30,6 +33,7 @@ function updateResultsInPopup(msg) {
 
 function render(msg, resultSelectedIndex) {
 	/* Scroll to the resulted selected. */
+	console.log("scrolling");
 	browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
 		var port = browser.tabs.connect(tabs[0].id, {name: "scrollToMatch"});
 		port.postMessage({resultSelectedIndex: resultSelectedIndex});
@@ -78,6 +82,7 @@ function sendAndReceive() {
 		$resultsList.show();
 		browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			var port = browser.tabs.connect(tabs[0].id, {name: "fromSendAndReceive"});
+			// console.log("send and recieve");
 			port.postMessage({searchText: searchText});
 			port.onMessage.addListener(function(msg) {
 				updateResultsInPopup(msg);
@@ -143,6 +148,7 @@ window.onload = function() {
 	/* The lastSearchText is saved per tab so when opening the popup we can check if we already searched for something on this tab. */
 	browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
 		var port = browser.tabs.connect(tabs[0].id, {name: "getLastSearchText"});
+		// console.log("loading shit");
 		port.postMessage({}); // The intention of this communication is always the same so we make the message empty.
 		port.onMessage.addListener(function(msg) {
 			if (msg.lastSearchText.length > 0) {
