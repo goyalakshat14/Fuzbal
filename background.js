@@ -2,16 +2,37 @@
 MIT license */
 
 var vectors;
-$.getJSON("./glove_small_dict.json", function(json) {
-	vectors = json;
+
+$.ajax({
+	url: './glove_small_dict.json',
+	type: "POST",
+	contentType: "application/json",
+	dataType: "json",
+	success: function (data) {
+	    vectors = data;
+	}
 });
+
+// $.getJSON("./glove_small_dict.json", function(json) {
+// 	vectors = json;
+// });
 
 var stopWords;
-$.getJSON("./stopWords.json", function(json) {
-	stopWords = json;
-});
 
-chrome.runtime.onConnect.addListener(function(port) {
+$.ajax({
+	url: './stopWords.json',
+	type: "POST",
+	contentType: "application/json",
+	dataType: "json",
+	success: function (data) {
+	  	stopWords = data;
+	}	
+});
+// $.getJSON("./stopWords.json", function(json) {
+// 	stopWords = json;
+// });
+
+browser.runtime.onConnect.addListener(function(port) {
 	if (port.name == "vectorsLookup") {
 		port.onMessage.addListener(function(msg) {
 			function subset(keys, dict) {

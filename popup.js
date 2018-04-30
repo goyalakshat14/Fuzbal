@@ -14,7 +14,7 @@ var resultSelectedIndex = 0; // Index of the active result (in green).,
 var lastMsg;
 
 /* Listener for receiving messages from the content_script (run in a tab). */
-chrome.runtime.onConnect.addListener(function(port) {
+browser.runtime.onConnect.addListener(function(port) {
 	if (port.name == "sendBackResults") {
 		port.onMessage.addListener(function(msg) {
 			updateResultsInPopup(msg);
@@ -30,8 +30,8 @@ function updateResultsInPopup(msg) {
 
 function render(msg, resultSelectedIndex) {
 	/* Scroll to the resulted selected. */
-	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-		var port = chrome.tabs.connect(tabs[0].id, {name: "scrollToMatch"});
+	browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		var port = browser.tabs.connect(tabs[0].id, {name: "scrollToMatch"});
 		port.postMessage({resultSelectedIndex: resultSelectedIndex});
 	});
 
@@ -76,8 +76,8 @@ function sendAndReceive() {
 		$helpTips.hide(); // Make sure to hide the helpTips always when help menu is not indicated. 
 		$loadingIcon.show();
 		$resultsList.show();
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			var port = chrome.tabs.connect(tabs[0].id, {name: "fromSendAndReceive"});
+		browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			var port = browser.tabs.connect(tabs[0].id, {name: "fromSendAndReceive"});
 			port.postMessage({searchText: searchText});
 			port.onMessage.addListener(function(msg) {
 				updateResultsInPopup(msg);
@@ -141,8 +141,8 @@ window.onload = function() {
 	$searchText.val('Loading...');
 
 	/* The lastSearchText is saved per tab so when opening the popup we can check if we already searched for something on this tab. */
-	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-		var port = chrome.tabs.connect(tabs[0].id, {name: "getLastSearchText"});
+	browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		var port = browser.tabs.connect(tabs[0].id, {name: "getLastSearchText"});
 		port.postMessage({}); // The intention of this communication is always the same so we make the message empty.
 		port.onMessage.addListener(function(msg) {
 			if (msg.lastSearchText.length > 0) {
@@ -160,7 +160,7 @@ window.onload = function() {
 /* Open a new tab for links within the popup. */
 $(document).ready(function(){
 	$('body').on('click', 'a', function(){
-		chrome.tabs.create({url: $(this).attr('href')});
+		browser.tabs.create({url: $(this).attr('href')});
 		return false;
 	});
 });

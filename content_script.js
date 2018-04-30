@@ -14,7 +14,7 @@ var properly_quoted_regex = /^(?:(?:\s{0,1}\"([^\s](?:(?!(?:\s\")).)*)\"(?=(?:\s
 
 var lastResultSelectedIndex = 0;
 
-var portB2 = chrome.runtime.connect({name: "vectorsLookup"});
+var portB2 = browser.runtime.connect({name: "vectorsLookup"});
 /* Anytime we get a message back from background page under this port, we enrich our local word2vec dictionary.
 We can continuously look up the vectors for the search terms and add those definitions to localWords2Vects */
 portB2.onMessage.addListener(function(msg) {
@@ -22,7 +22,7 @@ portB2.onMessage.addListener(function(msg) {
 		localWords2Vects[word] = msg.localWords2Vects[word];
 	}
 
-	var portP2 = chrome.runtime.connect({name: "sendBackResults"});
+	var portP2 = browser.runtime.connect({name: "sendBackResults"});
 	var m = lastSearchText.match(properly_quoted_regex);
 	if (lastSearchText.length > 0 && properly_quoted_regex.exec(lastSearchText)) {
 		if (doNotEscape == false || (doNotEscape == true && !''.match(lastSearchText))) {
@@ -37,7 +37,7 @@ portB2.onMessage.addListener(function(msg) {
 	}
 });
 
-var portB1 = chrome.runtime.connect({name: "stopWordsLookup"});
+var portB1 = browser.runtime.connect({name: "stopWordsLookup"});
 portB1.onMessage.addListener(function(msg) {
 	stopWords = msg.stopWords;
 });
@@ -76,7 +76,7 @@ function isRegEx(searchText) {
 	}
 }
 
-chrome.runtime.onConnect.addListener(function(portP) {
+browser.runtime.onConnect.addListener(function(portP) {
 	if (portP.name == "fromSendAndReceive") {
 		portP.onMessage.addListener(function(msg) {
 			var searchText = msg.searchText;

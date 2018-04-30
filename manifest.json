@@ -7,7 +7,7 @@
     "128": "./icons/fuzbal_icon.png"
   },
   "browser_action": {
-    "default_name": "Fuzbal",
+    "default_title": "Fuzbal",
     "default_icon": "./icons/fuzbal_marker.png",
     "default_popup": "popup.html"
   },
