@@ -25,7 +25,7 @@ browser.runtime.onConnect.addListener(function(port) {
 });
 
 function updateResultsInPopup(msg) {
-	console.log("updateResultsInPopup");
+	// console.log("updateResultsInPopup");
 	lastMsg = msg; // Save message (to be used when popup is reopened on a tab).
 	resultSelectedIndex = 0; // Set first result to be the active result (in green).
 	render(msg, resultSelectedIndex); // Update the mustache template.
@@ -33,17 +33,20 @@ function updateResultsInPopup(msg) {
 
 function render(msg, resultSelectedIndex) {
 	/* Scroll to the resulted selected. */
-	console.log("scrolling");
+	// console.log("scrolling");
 	browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
 		var port = browser.tabs.connect(tabs[0].id, {name: "scrollToMatch"});
 		port.postMessage({resultSelectedIndex: resultSelectedIndex});
 	});
-
+	// console.log("After scrolling");
+	// console.log(msg)
+	msg.results = JSON.parse(msg.results)
 	/* Partition the results into active and non-active results. */
 	var resultsBeforeSelected = [];
 	var resultsSelected = [];
 	var resultsAfterSelected = [];
 	for (var i = 0; i < msg.results.length; i++) {
+		// console.log("Someone here");
 		if (i < resultSelectedIndex) {
 			resultsBeforeSelected[resultsBeforeSelected.length] = msg.results[i];
 		} else if (i == resultSelectedIndex) {
@@ -53,13 +56,17 @@ function render(msg, resultSelectedIndex) {
 		}
 	}
 
+	// console.log("constructing msg");
 	var numResults = msg.results.length;
+	// console.log(numResults);
 	if (numResults > 0) {
+
 		$resultsList.show();
 		var EXACT_RESULT_THRESHOLD = 99;
 		if (numResults > EXACT_RESULT_THRESHOLD) { // Whenever we get more than N results, we do not display the actual number.
 			numResults = 'Many';
 		}
+		// console.log("yo homey this is th data I am sending back");
 		var rendered = Mustache.render(template, {msg: {numResults : numResults,
 			resultsBeforeSelected: resultsBeforeSelected, resultsSelected: resultsSelected, resultsAfterSelected: resultsAfterSelected}});
 		$resultsList.html(rendered);

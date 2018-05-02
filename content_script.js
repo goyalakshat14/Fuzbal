@@ -15,6 +15,7 @@ var properly_quoted_regex = /^(?:(?:\s{0,1}\"([^\s](?:(?!(?:\s\")).)*)\"(?=(?:\s
 var lastResultSelectedIndex = 0;
 
 var portB2 = browser.runtime.connect({name: "vectorsLookup"});
+// console.log("in the content script");
 /* Anytime we get a message back from background page under this port, we enrich our local word2vec dictionary.
 We can continuously look up the vectors for the search terms and add those definitions to localWords2Vects */
 portB2.onMessage.addListener(function(msg) {
@@ -24,11 +25,14 @@ portB2.onMessage.addListener(function(msg) {
 
 	var portP2 = browser.runtime.connect({name: "sendBackResults"});
 	var m = lastSearchText.match(properly_quoted_regex);
+	results = [];
+	// console.log("Matching is going to happen");
 	if (lastSearchText.length > 0 && properly_quoted_regex.exec(lastSearchText)) {
 		if (doNotEscape == false || (doNotEscape == true && !''.match(lastSearchText))) {
 			var NUM_NEAREST_NEIGHBORS = 10;
 			results = getResults(lastSearchText, NUM_NEAREST_NEIGHBORS); // Only consider the top N nearest neighbors to each word on the page.
-			portP2.postMessage({results: results});
+			// console.log(results);
+			portP2.postMessage({results: JSON.stringify(results)});
 		} else {
 			portP2.postMessage({results: []}); // Send empty list back if nothing is in the searchText input box. 
 		}
