@@ -216,6 +216,7 @@ function expandSearchText(searchText, knn) {
 							stopWords.words.indexOf(uniqueVisibleWords[j]) == -1 &&
 							uniqueVisibleWords[j] in localWords2Vects) {
 							// Each element in words contains the similar word and the distance (score) between the vectors between the pair of words. 
+							// console.log(getDistance(localWords2Vects[uniqueVisibleWords[j]], vector)+" "+uniqueVisibleWords[j]);
 							words[words.length] = {'word' : uniqueVisibleWords[j], // The similar word. 
 							'score' : getDistance(localWords2Vects[uniqueVisibleWords[j]], vector)};
 						}
@@ -223,7 +224,7 @@ function expandSearchText(searchText, knn) {
 					words = words.sort(function(elem1, elem2) {
 						return elem1.score - elem2.score; // Sort the words array by the scores in ascending order. 
 					}).slice(0, knn); // Take the closest knn words (we do not care about their actual distance). 
-					var MAX_DISTANCE_AWAY = 100;
+					var MAX_DISTANCE_AWAY = 20;
 					words = words.filter(function(el) { return el.score < MAX_DISTANCE_AWAY }); // Use only the words where the distance squared is less than N. 
 					for (var j = 0; j < words.length; j++) {
 						words[j] = words[j].word; // Drop the distance attribute.
