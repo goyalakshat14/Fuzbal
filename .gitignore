@@ -2,3 +2,4 @@ glove_dict.json
 vectors_dict.json
 .idea/
 node_modules/
+word2vec*
